@@ -1,0 +1,112 @@
+import pandas as pd
+from sqlalchemy import create_engine
+import datetime
+import json
+import time
+import pickle, os
+import numpy as np
+from config import db_string as db_connection_str
+from matplotlib import pyplot as plt
+
+#create connection
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_rows', None)
+connect_args={'ssl':{'fake_flag_to_enable_tls': True},
+             'port': 3306}
+
+db_connection = create_engine(db_connection_str,connect_args= connect_args)
+
+# sci-score -major and minor per country (h2020_sic_scores_per_country and h2020_sci_scores_per_country)
+
+def get_sic_scores_per_country():
+    sql="""
+    select * from h2020_sic_scores_per_country
+    """
+
+    df = pd.read_sql(sql, db_connection)
+    return df
+
+def get_sic_scores_major_and_minor_fields_col_dic():
+    sql="""
+    select * from h2020_project_sic_scores_major_and_minor_fields_col_dic
+    """
+
+    df1 = pd.read_sql(sql, db_connection)
+    return df1
+
+def get_sic_column_data_from_field(col):
+    "returns the column and field type corresponding to the given field name"
+    sql="""
+    select column_id,field_scope from h2020_project_sic_scores_major_and_minor_fields_col_dic
+    where column_description= '"""+str(col)+"""'"""
+    try:
+        df1 = pd.read_sql(sql, db_connection)
+        return df1['column_id'].values[0], df1['field_scope'].values[0]
+    except Exception as e:
+        print("EXC: ", e)
+        return "",""
+
+
+def get_sic_score_from_country_and_field(country,field):
+    df=get_sic_scores_per_country()
+    df1=get_sic_scores_major_and_minor_fields_col_dic()
+    
+    df=df.loc[df['country']==country]
+    col,field_type=get_sic_column_data_from_field(field)
+    
+    if col!="" and field_type!="":
+        return float(df[col].values[0])
+
+
+def get_average_major_and_minor_score_per_country():
+    "returns the stats for major and minor score per country for sic"
+
+    df=get_sic_scores_per_country()
+    df1=get_sic_scores_major_and_minor_fields_col_dic()
+    
+    all_countries=list(df.country.unique())
+    #all_countries.remove("None")
+    all_countries.remove(None)
+    minor_fields=df1.loc[df1['field_scope']=="Minor Field"]
+    major_fields=df1.loc[df1['field_scope']=="Major Field"]
+    
+    minor_cols=minor_fields.column_id.values
+    major_cols=major_fields.column_id.values
+    data={}
+    
+    minor_avg=[]
+    major_avg=[]
+    for country in all_countries:
+        if country=="None" or country==None:
+            continue
+        sub_df=df.loc[df['country']==country]
+        sub_df=sub_df[minor_cols]
+        sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
+        
+        sum_minor=sum(list(sub_df.values[0])) # get minor average
+        len_minor=len(list(sub_df.values[0])) 
+        
+        data[country]={}
+        try:
+            data[country]['minor_average']=sum_minor/len_minor
+            minor_avg.append(sum_minor/len_minor)
+        except:
+            data[country]['minor_average']=0
+            minor_avg.append(0)
+            
+        
+        sub_df=df.loc[df['country']==country]
+        sub_df=sub_df[major_cols]
+        sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
+        
+        
+        sum_major=sum(list(sub_df.values[0])) # get major average
+        len_major=len(list(sub_df.values[0])) 
+        
+        try:
+            data[country]['major_average']=sum_major/len_major
+            major_avg.append(sum_major/len_major)
+        except:
+            data[country]['major_average']=0 
+            major_avg.append(0)
+    return data, sum(minor_avg)/len(minor_avg), sum(major_avg)/len(major_avg), np.std(minor_avg), np.std(major_avg)

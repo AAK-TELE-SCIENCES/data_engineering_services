@@ -1,0 +1,16 @@
+flask
+numpy
+matplotlib
+sqlalchemy
+pandas
+Pillow
+nest_asyncio
+Flask-Babel
+Flask-Cors
+Flask-SSLify
+mysql
+mysql-connector
+mysqlclient
+PyMySQL
+packaging
+sklearn

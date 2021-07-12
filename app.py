@@ -1,6 +1,5 @@
 from flask import Flask
 from flask import Flask, request, jsonify, make_response, send_file, Response
-from PIL import Image
 app = Flask('app')
 import numpy as np
 import requests

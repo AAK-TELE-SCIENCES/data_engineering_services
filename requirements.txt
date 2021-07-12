@@ -14,3 +14,4 @@ mysqlclient
 PyMySQL
 packaging
 sklearn
+requests

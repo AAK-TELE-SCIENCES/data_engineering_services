@@ -10,7 +10,7 @@ echo "Removing docker image for data_engineering_services...."
 docker image rm  data_engineering_services:latest
 
 echo "Building docker image for data_engineering_services...."
-docker build -t data_engineering_services:latest -f Dockerfile.dev .
+docker build -t data_engineering_services:latest -f Dockerfile .
 
 echo "Running docker image for data_engineering_services...."
 docker run -d --name data_engineering_services --restart=always -p 3000:3000

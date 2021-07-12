@@ -96,4 +96,4 @@ def get_sci_major_minor_score_per_country():
     return resp
 
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=3000)
+    app.run(debug=True, host="0.0.0.0", port=3001)

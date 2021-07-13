@@ -37,7 +37,6 @@ def get_all_table_names():
     return base_folder+'table_names.csv'
 
 
-
 def plot_cumulative_scores_per_country(countries):
     "plots the cumulative scores per country"
     print("-- plot_cumulative_scores_per_country --")

@@ -95,5 +95,42 @@ def get_sci_major_minor_score_per_country():
     resp.headers.add('Access-Control-Allow-Origin', '*')
     return resp
 
+
+@app.route('/get_sci_major_minor_score_per_inst', methods=['POST'])
+def get_sci_major_minor_score_per_inst():
+    "returns the sci stats per inst"
+    
+    x=request.get_data(parse_form_data=True)
+    x=ast.literal_eval(x.decode("utf-8"))
+    insts=x['insts']
+    print("insts: ", insts)
+    data,global_minor_avg,global_major_avg=sci_per_country.get_average_major_and_minor_sci_per_inst(insts)
+    resp={}
+    resp['data']=data
+    resp['global_minor_avg']=global_minor_avg
+    resp['global_major_avg']=global_major_avg
+    resp=jsonify(resp)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
+
+
+@app.route('/get_sic_major_minor_score_per_inst', methods=['POST'])
+def get_sic_major_minor_score_per_inst():
+    "returns the sic stats per inst"
+    
+    x=request.get_data(parse_form_data=True)
+    x=ast.literal_eval(x.decode("utf-8"))
+    insts=x['insts']
+    print("insts: ", insts)
+    
+    data,global_minor_avg,global_major_avg=sic_per_country.get_average_major_and_minor_sic_per_inst(insts)
+    resp={}
+    resp['data']=data
+    resp['global_minor_avg']=global_minor_avg
+    resp['global_major_avg']=global_major_avg
+    resp=jsonify(resp)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
+
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=3001)

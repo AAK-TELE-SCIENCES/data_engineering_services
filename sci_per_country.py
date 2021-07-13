@@ -7,6 +7,7 @@ import pickle, os
 import numpy as np
 from config import db_string as db_connection_str
 from matplotlib import pyplot as plt
+from tqdm import tqdm
 
 #create connection
 pd.set_option('display.max_columns', None)
@@ -106,3 +107,135 @@ def get_average_major_and_minor_score_per_country():
             data[country]['major_average']=0 
             major_avg.append(0)
     return data, sum(minor_avg)/len(minor_avg), sum(major_avg)/len(major_avg), np.std(minor_avg), np.std(major_avg)
+
+
+def get_all_insts():
+    sql="select distinct(inst_name) from h2020_sic_scores_per_inst"
+    df = pd.read_sql(sql, db_connection)
+    return df
+
+def get_sci_scores_per_inst(inst_name):
+    sql="""select * from h2020_sci_scores_per_inst 
+    where replace(inst_name, '\"', '') ='"""+inst_name+"""'"""
+    
+    df = pd.read_sql(sql, db_connection)
+    return df
+
+
+def get_average_major_and_minor_sci_for_all_insts():
+    "returns average major and minor sci scores for all the insts"
+    
+    all_insts=get_all_insts()['inst_name'].values
+    
+    # get columns dict
+    df1=get_scientific_scores_major_and_minor_fields_col_dic()
+    
+    minor_fields=df1.loc[df1['field_scope']=="Minor Field"]
+    major_fields=df1.loc[df1['field_scope']=="Major Field"]
+    
+    minor_cols=minor_fields.column_id.values
+    major_cols=major_fields.column_id.values
+    
+    data={}
+    
+    minor_avg=[]
+    major_avg=[]
+    with tqdm(total=len(all_insts)) as pbar:
+        for inst in all_insts:
+            sub_df=get_sci_scores_per_inst(inst)
+
+            sub_df=sub_df[minor_cols]
+            sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
+
+            sum_minor=sum(list(sub_df.values[0])) # get minor average
+            len_minor=len(list(sub_df.values[0])) 
+
+            data[inst]={}
+            try:
+                data[inst]['minor_average']=sum_minor/len_minor
+                minor_avg.append(sum_minor/len_minor)
+            except:
+                data[inst]['minor_average']=0
+                minor_avg.append(0)
+
+            sub_df=get_sci_scores_per_inst(inst)
+            sub_df=sub_df[major_cols]
+            sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
+
+
+            sum_major=sum(list(sub_df.values[0])) # get major average
+            len_major=len(list(sub_df.values[0])) 
+
+            try:
+                data[inst]['major_average']=sum_major/len_major
+                major_avg.append(sum_major/len_major)
+            except:
+                data[inst]['major_average']=0 
+                major_avg.append(0)
+            pbar.update(1)
+            print(data)
+        return data,minor_avg,major_avg, sum(minor_avg)/len(minor_avg), sum(major_avg)/len(major_avg)
+    
+
+def get_average_major_and_minor_sci_per_inst(inst_name=[]):
+    "returns for the given insts only"
+    all_insts=get_all_insts()
+    all_insts['inst_name']=all_insts['inst_name'].str.replace("'", '')
+    all_insts['inst_name']=all_insts['inst_name'].str.replace('"', '')
+    all_insts=all_insts['inst_name'].values
+    
+    # get columns dict
+    df1=get_scientific_scores_major_and_minor_fields_col_dic()
+    
+    minor_fields=df1.loc[df1['field_scope']=="Minor Field"]
+    major_fields=df1.loc[df1['field_scope']=="Major Field"]
+    
+    minor_cols=minor_fields.column_id.values
+    major_cols=major_fields.column_id.values
+    
+    data={}
+    
+    minor_avg=[]
+    major_avg=[]
+    with tqdm(total=len(all_insts)) as pbar:
+        for inst in all_insts:
+            if inst not in inst_name and inst_name!=[]: # if selective insts are given
+                continue
+            sub_df=get_sci_scores_per_inst(inst)
+            sub_df=sub_df[minor_cols]
+            sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
+            
+            try:
+                sum_minor=sum(list(sub_df.values[0])) # get minor average
+                len_minor=len(list(sub_df.values[0])) 
+            except:
+                sum_minor=[]
+                len_minor=0
+            
+            data[inst]={}
+            try:
+                data[inst]['minor_average']=sum_minor/len_minor
+                minor_avg.append(sum_minor/len_minor)
+            except:
+                data[inst]['minor_average']=0
+                minor_avg.append(0)
+
+            sub_df=get_sci_scores_per_inst(inst)
+            sub_df=sub_df[major_cols]
+            sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
+
+            try:
+                sum_major=sum(list(sub_df.values[0])) # get major average
+                len_major=len(list(sub_df.values[0])) 
+            except:
+                sum_major=[]
+                len_major=0
+            
+            try:
+                data[inst]['major_average']=sum_major/len_major
+                major_avg.append(sum_major/len_major)
+            except:
+                data[inst]['major_average']=0 
+                major_avg.append(0)
+            pbar.update(1)
+        return data, sum(minor_avg)/len(minor_avg), sum(major_avg)/len(major_avg)

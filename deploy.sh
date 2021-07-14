@@ -13,4 +13,4 @@ echo "Building docker image for data_engineering_services...."
 docker build -t data_engineering_services:latest -f Dockerfile .
 
 echo "Running docker image for data_engineering_services...."
-docker run -d data_engineering_services --name data_engineering_services --restart=always -p 3001:3001
+docker run -d data_engineering_services --name data_engineering_services --restart=always -p 3000:3000

@@ -8,9 +8,9 @@ RUN apt-get install ffmpeg libsm6 libxext6 poppler-utils  -y
 WORKDIR /data_engineering_services
 RUN ls
 COPY . .
-
 RUN pip install -r requirements.txt --no-cache-dir
-#ENTRYPOINT python app.py
-CMD ["flask", "run", "--host", "0.0.0.0"]
+EXPOSE 3001
+ENTRYPOINT python app.py
+#CMD ["flask", "run", "--host", "0.0.0.0"]
 
 #ENTRYPOINT ["/start.sh"]

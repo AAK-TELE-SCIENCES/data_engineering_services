@@ -12,7 +12,7 @@ from matplotlib import pyplot as plt
 matplotlib.pyplot.switch_backend('Agg') 
 import sic_per_country
 import sci_per_country
-
+import inst, countries
 CORS(app, support_credentials=True)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -114,23 +114,43 @@ def get_sci_major_minor_score_per_inst():
     return resp
 
 
-@app.route('/get_sic_major_minor_score_per_inst', methods=['POST'])
-def get_sic_major_minor_score_per_inst():
-    "returns the sic stats per inst"
+@app.route('/compare_inst', methods=['POST'])
+def compare_inst():
+    "gives comparison between various insts"
     
     x=request.get_data(parse_form_data=True)
     x=ast.literal_eval(x.decode("utf-8"))
     insts=x['insts']
     print("insts: ", insts)
     
-    data,global_minor_avg,global_major_avg=sic_per_country.get_average_major_and_minor_sic_per_inst(insts)
-    resp={}
-    resp['data']=data
-    resp['global_minor_avg']=global_minor_avg
-    resp['global_major_avg']=global_major_avg
+    fields=x['fields']
+    print("fields: ", fields)
+    
+    data=inst.compare_insts(insts,fields)
+    resp=data
     resp=jsonify(resp)
     resp.headers.add('Access-Control-Allow-Origin', '*')
     return resp
+
+
+@app.route('/compare_countries', methods=['POST'])
+def compare_countries():
+    "gives comparison between various countries"
+    
+    x=request.get_data(parse_form_data=True)
+    x=ast.literal_eval(x.decode("utf-8"))
+    con=x['countries']
+    print("con: ", con)
+    
+    fields=x['fields']
+    print("fields: ", fields)
+    
+    data=countries.compare_countries(con,fields)
+    resp=data
+    resp=jsonify(resp)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
+
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=3000)

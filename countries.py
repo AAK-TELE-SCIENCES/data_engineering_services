@@ -47,6 +47,31 @@ def get_sci_scores_per_country(country):
     return df
 
 
+def get_sci_name_from_column(col_name):
+    sql="""
+    select column_description from h2020_project_scientific_scores_major_and_minor_fields_col_dic
+    where column_id= '"""+str(col_name)+"""'"""
+    try:
+        df1 = pd.read_sql(sql, db_connection)
+        return df1['column_description'].values[0]
+    except Exception as e:
+        #print("EXC: ", e)
+        return ""
+    
+    
+    
+def get_sic_name_from_column(col_name):
+    sql="""
+    select column_description from h2020_project_sic_scores_major_and_minor_fields_col_dic
+    where column_id= '"""+str(col_name)+"""'"""
+    try:
+        df1 = pd.read_sql(sql, db_connection)
+        return df1['column_description'].values[0]
+    except Exception as e:
+        #print("EXC: ", e)
+        return ""
+
+
 def compare_countries(country_name=[],fields=[]):
     "takes various countries and compares the given fields"
     
@@ -85,4 +110,63 @@ def compare_countries(country_name=[],fields=[]):
         data['averages'][f]=avg
         data['std_dev'][f]=std
     return data
+
+
+
+# for a given country, make graph of all the fields that are non zero (can take fields as input)
+
+def get_countries_info(con):
+    sic=get_sic_scores_per_country(con)
+    sci=get_sci_scores_per_country(con)
+    data={}
+    df1=sic_per_country.get_sic_scores_major_and_minor_fields_col_dic() # populate sic data
+    
+    minor_fields=df1.loc[df1['field_scope']=="Minor Field"]
+    major_fields=df1.loc[df1['field_scope']=="Major Field"]
+    
+    minor_cols=minor_fields.column_id.values
+    major_cols=major_fields.column_id.values
+    
+    sub_df=sic[minor_cols]
+    sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
+    cols=list(sub_df)
+    data['sic']={}
+    data['sic']['minor']={}
+    
+    for col in cols:
+        data['sic']['minor'][get_sic_name_from_column(col)]=sub_df[col].values[0]
+    
+    sub_df=sic[major_cols]
+    sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
+    cols=list(sub_df)
+    data['sic']['major']={}
+    for col in cols:
+        data['sic']['major'][get_sic_name_from_column(col)]=sub_df[col].values[0]
+    
+    df1=sci_per_country.get_scientific_scores_major_and_minor_fields_col_dic() # populate sci data
+    
+    minor_fields=df1.loc[df1['field_scope']=="Minor Field"]
+    major_fields=df1.loc[df1['field_scope']=="Major Field"]
+    
+    minor_cols=minor_fields.column_id.values
+    major_cols=major_fields.column_id.values
+    
+    sub_df=sci[minor_cols]
+    sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
+    cols=list(sub_df)
+    data['sci']={}
+    data['sci']['minor']={}
+    
+    for col in cols:
+        data['sci']['minor'][get_sic_name_from_column(col)]=sub_df[col].values[0]
+        
+    sub_df=sic[major_cols]
+    sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
+    cols=list(sub_df)
+    data['sci']['major']={}
+    for col in cols:
+        data['sci']['major'][get_sic_name_from_column(col)]=sub_df[col].values[0]
+    
+    return data
+
 

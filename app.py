@@ -17,6 +17,7 @@ CORS(app, support_credentials=True)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 
+
 @app.route('/get_table_names', methods=['GET'])
 def get_table_names():
     "get the table names"
@@ -146,6 +147,40 @@ def compare_countries():
     print("fields: ", fields)
     
     data=countries.compare_countries(con,fields)
+    resp=data
+    resp=jsonify(resp)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
+
+
+@app.route('/get_inst_info', methods=['POST'])
+def get_inst_info():
+    "get inst info"
+    
+    x=request.get_data(parse_form_data=True)
+    x=ast.literal_eval(x.decode("utf-8"))
+    insts=x['inst'][0]
+    print("insts: ", insts)
+    
+    
+    data=inst.get_inst_info(insts)
+    resp=data
+    resp=jsonify(resp)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
+
+
+@app.route('/get_country_info', methods=['POST'])
+def get_country_info():
+    "get country info"
+    
+    x=request.get_data(parse_form_data=True)
+    x=ast.literal_eval(x.decode("utf-8"))
+    con=x['country'][0]
+    print("country: ", con)
+    
+    
+    data=countries.get_countries_info(con)
     resp=data
     resp=jsonify(resp)
     resp.headers.add('Access-Control-Allow-Origin', '*')

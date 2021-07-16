@@ -62,7 +62,7 @@ def compare_insts(inst_name=[],fields=[]):
     "takes various insts and compares the given fields"
     
     data={}
-    
+    zero_vals={}
     for inst in inst_name:
         data[inst]={}
         data[inst]['sic']={}
@@ -74,6 +74,12 @@ def compare_insts(inst_name=[],fields=[]):
             col,field=sic_per_country.get_sic_column_data_from_field(f)
             if col!="" and field!="": # if sic, populate in sic json
                 sic1=sic[[col]].values[0][0]
+                if sic1==0: # to filter 0s
+                    try:
+                        zero_vals['sic'+"-"+field+"_"+f+"-"+str(sic1)]+=1
+                    except:
+                        zero_vals['sic'+"-"+field+"_"+f+"-"+str(sic1)]=0
+                        zero_vals['sic'+"-"+field+"_"+f+"-"+str(sic1)]+=1
                 try:
                     data[inst]['sic'][field].append({f:sic1})
                 except Exception as e:
@@ -83,6 +89,12 @@ def compare_insts(inst_name=[],fields=[]):
             col,field=sci_per_country.get_column_data_from_field(f)
             if col!="" and field!="": # if sci, populate in sci json
                 sci1=sci[[col]].values[0][0]
+                if sci1==0: # to filter 0s
+                    try:
+                        zero_vals['sci'+"-"+field+"_"+f+"-"+str(sci1)]+=1
+                    except:
+                        zero_vals['sci'+"-"+field+"_"+f+"-"+str(sci1)]=0
+                        zero_vals['sci'+"-"+field+"_"+f+"-"+str(sci1)]+=1
                 try:
                     data[inst]['sci'][field].append({f:sci1})
                 except:
@@ -95,6 +107,16 @@ def compare_insts(inst_name=[],fields=[]):
         avg,std=get_inst_stats_for_field(f)
         data['averages'][f]=avg
         data['std_dev'][f]=std
+
+    for k,v in zero_vals.items():
+        if v==len(inst_name): # all are zero, remove them
+            for inst in inst_name:
+                keys=k.split('_')
+                path1=keys[0].split('-')
+                path2=keys[1].split('-')
+                x={path2[0]:float(path2[1])}
+                data[inst][path1[0]][path1[1]].remove(x)
+    
     return data
 
 

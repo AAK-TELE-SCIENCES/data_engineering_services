@@ -100,7 +100,7 @@ def compare_insts(inst_name=[],fields=[]):
                 except:
                     data[inst]['sci'][field]=[]
                     data[inst]['sci'][field].append({f:sci1})
-            
+    
     data['averages']={}
     data['std_dev']={}
     for f in fields:
@@ -116,7 +116,11 @@ def compare_insts(inst_name=[],fields=[]):
                 path2=keys[1].split('-')
                 x={path2[0]:float(path2[1])}
                 data[inst][path1[0]][path1[1]].remove(x)
-    
+                try:
+                    del data['averages'][path2[0]]
+                    del data['std_dev'][path2[0]]
+                except:
+                    pass
     return data
 
 

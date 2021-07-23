@@ -12,7 +12,7 @@ from matplotlib import pyplot as plt
 matplotlib.pyplot.switch_backend('Agg') 
 import sic_per_country
 import sci_per_country
-import inst, countries
+import inst, countries, world_bank
 CORS(app, support_credentials=True)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -181,6 +181,55 @@ def get_country_info():
     
     
     data=countries.get_countries_info(con)
+    resp=data
+    resp=jsonify(resp)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
+
+
+@app.route('/get_world_bank_country_profile', methods=['POST'])
+def get_world_bank_country_profile():
+    "get country profile by world bank analysis"
+    
+    x=request.get_data(parse_form_data=True)
+    x=ast.literal_eval(x.decode("utf-8"))
+    con=x['country'][0]
+    print("country: ", con)
+    
+    
+    data=world_bank.get_country_profile(con)
+    resp=data
+    resp=jsonify(resp)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
+
+@app.route('/get_world_bank_best_countries', methods=['POST'])
+def get_world_bank_best_countries():
+    "get country profile by world bank analysis"
+    
+    x=request.get_data(parse_form_data=True)
+    x=ast.literal_eval(x.decode("utf-8"))
+    field=x['field'][0]
+    print("field: ", field)
+    
+    
+    data=world_bank.get_best_countries(field)
+    resp=data
+    resp=jsonify(resp)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
+
+@app.route('/get_world_bank_countries_trend', methods=['POST'])
+def get_world_bank_countries_trend():
+    "get country trend by world bank analysis"
+    
+    x=request.get_data(parse_form_data=True)
+    x=ast.literal_eval(x.decode("utf-8"))
+    con=x['country'][0]
+    print("country: ", con)
+    
+    
+    data=world_bank.get_trend_of_data(con)
     resp=data
     resp=jsonify(resp)
     resp.headers.add('Access-Control-Allow-Origin', '*')

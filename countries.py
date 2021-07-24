@@ -9,6 +9,13 @@ from config import db_string as db_connection_str
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 import sci_per_country, sic_per_country
+from itertools import islice
+
+# get best countries in the given field
+# get best inst in the given field
+# get the country with most active insts in the given field
+
+
 #create connection
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
@@ -16,6 +23,40 @@ connect_args={'ssl':{'fake_flag_to_enable_tls': True},
              'port': 3306}
 
 db_connection = create_engine(db_connection_str,connect_args= connect_args)
+
+def take(n, iterable):
+    "Return first n items of the iterable as a list"
+    return list(islice(iterable, n))
+
+def get_sci_score_from_country_per_field(col_name):
+    sql="select country,"+col_name+" from h2020_sci_scores_per_country"
+    df = pd.read_sql(sql, db_connection)
+    return df
+
+def get_sic_score_from_country_per_field(col_name):
+    sql="select country,"+col_name+" from h2020_sic_scores_per_country"
+    df = pd.read_sql(sql, db_connection)
+    return df
+
+
+def get_sci_score_from_inst_per_field(col_name):
+    sql="select inst_name,"+col_name+" from h2020_sci_scores_per_inst"
+    df = pd.read_sql(sql, db_connection)
+    return df
+
+def get_sic_score_from_ins_per_field(col_name):
+    sql="select inst_name,"+col_name+" from h2020_sic_scores_per_inst"
+    df = pd.read_sql(sql, db_connection)
+    return df
+
+def get_country_of_inst(inst):
+    sql="select country from eu_organizations where name='"+inst+"'"
+    df = pd.read_sql(sql, db_connection)
+    
+    try:
+        return df.values[0][0]
+    except:
+        return ""
 
 
 def get_country_stats_for_field(field):
@@ -197,4 +238,71 @@ def get_countries_info(con):
     
     return data
 
+def get_top_countries_from_inst(values):
+    country_scores={}
+    for val in values:
+        con=get_country_of_inst(val[0])
+        if con!="":
+            try:
+                country_scores[con]['num_insts']+=1
+            except:
+                country_scores[con]={}
+                country_scores[con]['num_insts']=0
+                country_scores[con]['num_insts']+=1
+            try:
+                country_scores[con]['average']=val[1]+country_scores[con]['average']
+            except:
+                country_scores[con]['average']=val[1]
+    for k,v in country_scores.items():
+        country_scores[k]['average']=country_scores[k]['average']/country_scores[k]['num_insts']
+    return country_scores
 
+def get_best_insts(field_name):
+    "returns best insts for the given field"
+    col,field=sic_per_country.get_sic_column_data_from_field(field_name)
+    country_scores={}
+    if col=="": # sci
+        col,field=sci_per_country.get_column_data_from_field(field_name)
+        if col=="": # no data found
+            return {}
+        sci=get_sci_score_from_inst_per_field(col)
+        sci=sci.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
+        sci=sci.dropna()
+        sci=sci.sort_values(col,ascending=False)
+        sci=dict(sci.values)
+        values= take(10, sci.items())
+        cons=get_top_countries_from_inst(values)
+        return values, cons
+    elif col!="": # sic
+        sic=sic_per_country.get_sic_score_from_inst_per_field(col)
+        sic=sic.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
+        sic=sic.dropna()
+        sic=sic.sort_values(col,ascending=False)
+        sic=dict(sic.values)
+        values= take(10, sic.items())
+        cons=get_top_countries_from_inst(values)
+        return values, cons
+    else: # no data found
+        return {}
+
+
+def get_best_countries(field_name):
+    "returns best countries for the given field"
+    col,field=sic_per_country.get_sic_column_data_from_field(field_name)
+    if col=="": # sci
+        col,field=sci_per_country.get_column_data_from_field(field_name)
+        if col=="": # no data found
+            return {}
+        sci=get_sci_score_from_country_per_field(col)
+        sci=sci.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
+        sci=sci.dropna()
+        sci=sci.sort_values(col,ascending=False)
+        return dict(sci.values)
+    elif col!="": # sic
+        sic=get_sic_score_from_country_per_field(col)
+        sic=sic.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
+        sic=sic.dropna()
+        sic=sic.sort_values(col,ascending=False)
+        return dict(sic.values)
+    else: # no data found
+        return {}

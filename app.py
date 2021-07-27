@@ -239,8 +239,6 @@ def get_world_bank_country_profile():
     return resp
 
 
-
-
 @app.route('/get_world_bank_best_countries', methods=['POST'])
 def get_world_bank_best_countries():
     "get country profile by world bank analysis"
@@ -274,6 +272,23 @@ def get_world_bank_countries_trend():
     return resp
 
 
+@app.route('/get_best_countries_for_field', methods=['POST'])
+def get_best_countries_for_field():
+    "get best countries for the given field i.e. sic or sci"
+    
+    x=request.get_data(parse_form_data=True)
+    x=ast.literal_eval(x.decode("utf-8"))
+    field=x['field'][0]
+    print("field: ", field)
+    
+    sort_by=x['sort_by'][0]
+    print("sort_by: ", sort_by)
+    
+    data=countries.get_best_countries_for_field(field,sort_by)
+    resp=data
+    resp=jsonify(resp)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
 
 
 if __name__ == '__main__':

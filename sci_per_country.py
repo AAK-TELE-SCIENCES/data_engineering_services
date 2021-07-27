@@ -57,6 +57,16 @@ def get_sci_score_from_country_and_field(country,field):
         return float(df[col].values[0])
 
 
+def get_all_sci_data_from_country():
+    "gets all sci data for countries"
+    sql="select * from h2020_sci_scores_per_country"
+    df = pd.read_sql(sql, db_connection)
+    df = df.iloc[1:]
+    df = df[df.country != 'None']
+    df = df[df.country != None]
+    return df
+
+
 def get_average_major_and_minor_score_per_country():
     df=get_sci_scores_per_country()
     df1=get_scientific_scores_major_and_minor_fields_col_dic()

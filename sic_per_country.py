@@ -183,6 +183,14 @@ def get_average_major_and_minor_sic_for_all_insts():
         return data,minor_avg,major_avg, sum(minor_avg)/len(minor_avg), sum(major_avg)/len(major_avg)
     
 
+def get_all_sic_data_from_country():
+    "returns all sic data"
+    sql="select * from h2020_sic_scores_per_country"
+    df = pd.read_sql(sql, db_connection)
+    df = df.iloc[1:]
+    df = df[df.country != 'None']
+    df = df[df.country != None]
+    return df
 
 
 def get_average_major_and_minor_sic_per_inst(inst_name=[]):

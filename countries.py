@@ -330,9 +330,9 @@ def get_best_countries_for_field(field_type,sort_by="average"):
         sub_df['count']=len(sub_df.columns)-1-sub_df.loc[:, sub_df.columns != 'country'].isnull().sum(axis=1)
         sub_df['average']=real_df.loc[:, real_df.columns != 'country'].mean(axis=1)
         if sort_by=="count":
-            sub_df=sub_df.sort_values(by=['count','average'],ascending=[False,False])
+            sub_df=sub_df.sort_values(by='count',ascending=False)
         else:
-            sub_df=sub_df.sort_values(by=['average','count'],ascending=[False,False])
+            sub_df=sub_df.sort_values(by='average',ascending=False)
         sub_df=sub_df[['country','average','count']][:30]
         sub_df1=sub_df.set_index('country')
         return sub_df1.T.to_dict('list')

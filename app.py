@@ -12,7 +12,7 @@ from matplotlib import pyplot as plt
 matplotlib.pyplot.switch_backend('Agg') 
 import sic_per_country
 import sci_per_country
-import inst, countries, world_bank
+import inst, countries, world_bank, companies
 CORS(app, support_credentials=True)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -272,23 +272,25 @@ def get_world_bank_countries_trend():
     return resp
 
 
-@app.route('/get_best_countries_for_field', methods=['POST'])
-def get_best_countries_for_field():
-    "get best countries for the given field i.e. sic or sci"
+@app.route('/get_best_countries_from_companies', methods=['POST'])
+def get_best_countries_from_companies():
+    "returns the countries by year which got the most investment, high average and counts"
     
     x=request.get_data(parse_form_data=True)
-    x=ast.literal_eval(x.decode("utf-8"))
-    field=x['field'][0]
-    print("field: ", field)
+    try:
+        x=ast.literal_eval(x.decode("utf-8"))
+        year=int(x['year'][0])
+        print("year: ", year)
+        data=companies.get_countries_of_most_investment(year)
+    except:
+        data=companies.get_countries_of_most_investment()
     
-    sort_by=x['sort_by'][0]
-    print("sort_by: ", sort_by)
-    
-    data=countries.get_best_countries_for_field(field,sort_by)
     resp=data
     resp=jsonify(resp)
     resp.headers.add('Access-Control-Allow-Origin', '*')
     return resp
+
+
 
 
 if __name__ == '__main__':

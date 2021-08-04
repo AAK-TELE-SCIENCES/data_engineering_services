@@ -314,15 +314,16 @@ def get_best_countries_for_field(field_type,sort_by="average"):
         df=sci_per_country.get_all_sci_data_from_country()
         sub_df=df.replace(0,np.nan)
         real_df=copy.deepcopy(sub_df)
-        sub_df['count']=len(sub_df.columns)-1-sub_df.loc[:, sub_df.columns != 'country'].isnull().sum(axis=1).astype(float)
-        sub_df['average']=real_df.loc[:, real_df.columns != 'country'].mean(axis=1).astype(float)
+        sub_df['count']=len(sub_df.columns)-1-sub_df.loc[:, sub_df.columns != 'country'].isnull().sum(axis=1)
+        sub_df['average']=real_df.loc[:, real_df.columns != 'country'].mean(axis=1)
         if sort_by=="count":
             sub_df=sub_df.sort_values(by='count',ascending=False)
         else:
             sub_df=sub_df.sort_values(by='average',ascending=False)
         sub_df=sub_df[['country','average','count']][:30]
-        sub_df1=sub_df.set_index('country')
-        return sub_df1.T.to_dict('list')
+        sub_df=sub_df.T.to_dict('list')
+        print(sub_df)
+        return {v[0]:[v[1],v[2]] for k,v in sub_df.items()}
     elif field_type=="sic":
         df=sic_per_country.get_all_sic_data_from_country()
         sub_df=df.replace(0,np.nan)
@@ -334,7 +335,8 @@ def get_best_countries_for_field(field_type,sort_by="average"):
         else:
             sub_df=sub_df.sort_values(by='average',ascending=False)
         sub_df=sub_df[['country','average','count']][:30]
-        sub_df1=sub_df.set_index('country')
-        return sub_df1.T.to_dict('list')
+        sub_df=sub_df.T.to_dict('list')
+        print(sub_df)
+        return {v[0]:[v[1],v[2]] for k,v in sub_df.items()}
     else:
         return {}

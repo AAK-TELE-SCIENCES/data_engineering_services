@@ -186,7 +186,7 @@ def get_inst_info(inst):
     data['sci']['major']={}
     data['sic']['major_global_average']={}
     for col in cols:
-        data['sci']['major'][get_sic_name_from_column(col)]=sub_df[col].values[0]
+        data['sci']['major'][get_sci_name_from_column(col)]=sub_df[col].values[0]
         # add average per field as well
         data['sic']['major_global_average'][get_sci_name_from_column(col)]=get_inst_stats_for_field(get_sci_name_from_column(col))[0]
     

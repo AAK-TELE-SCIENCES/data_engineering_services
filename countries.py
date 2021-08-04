@@ -201,16 +201,22 @@ def get_countries_info(con):
     cols=list(sub_df)
     data['sic']={}
     data['sic']['minor']={}
-    
+    data['sic']['minor_global_average']={}
+
     for col in cols:
         data['sic']['minor'][get_sic_name_from_column(col)]=sub_df[col].values[0]
+        # add average per field as well
+        data['sic']['minor_global_average'][get_sic_name_from_column(col)]=get_country_stats_for_field(get_sic_name_from_column(col))[0]
     
     sub_df=sic[major_cols]
     sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
     cols=list(sub_df)
     data['sic']['major']={}
+    data['sic']['major_global_average']={}
     for col in cols:
         data['sic']['major'][get_sic_name_from_column(col)]=sub_df[col].values[0]
+        # add average per field as well
+        data['sic']['major_global_average'][get_sic_name_from_column(col)]=get_country_stats_for_field(get_sic_name_from_column(col))[0]
     
     df1=sci_per_country.get_scientific_scores_major_and_minor_fields_col_dic() # populate sci data
     
@@ -225,17 +231,22 @@ def get_countries_info(con):
     cols=list(sub_df)
     data['sci']={}
     data['sci']['minor']={}
+    data['sci']['minor_global_average']={}
     
     for col in cols:
-        data['sci']['minor'][get_sic_name_from_column(col)]=sub_df[col].values[0]
-        
+        data['sci']['minor'][get_sci_name_from_column(col)]=sub_df[col].values[0]
+        # add average per field as well
+        data['sci']['minor_global_average'][get_sci_name_from_column(col)]=get_country_stats_for_field(get_sci_name_from_column(col))[0]
+    
     sub_df=sic[major_cols]
     sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
     cols=list(sub_df)
     data['sci']['major']={}
+    data['sci']['major_global_average']={}
     for col in cols:
-        data['sci']['major'][get_sic_name_from_column(col)]=sub_df[col].values[0]
-    
+        data['sci']['major'][get_sci_name_from_column(col)]=sub_df[col].values[0]
+        # add average per field as well
+        data['sci']['major_global_average'][get_sci_name_from_column(col)]=get_country_stats_for_field(get_sci_name_from_column(col))[0]
     return data
 
 def get_top_countries_from_inst(values):

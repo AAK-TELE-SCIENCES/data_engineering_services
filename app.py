@@ -309,7 +309,7 @@ def get_all_inst_per_countries():
     
     x=request.get_data(parse_form_data=True)
     x=ast.literal_eval(x.decode("utf-8"))
-    country=int(x['country'][0])
+    country=x['country']
     print("country: ", country)
     
 

@@ -291,7 +291,34 @@ def get_best_countries_from_companies():
     return resp
 
 
+@app.route('/get_country_names', methods=['POST'])
+def get_country_names():
+    "returns the countries by names"
+    
+    data=countries.get_country_names()
+    resp={}
+    resp['countries']=data
+    resp=jsonify(resp)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
 
+
+@app.route('/get_all_inst_per_countries', methods=['POST'])
+def get_all_inst_per_countries():
+    "returns the insts found in the given country name"
+    
+    x=request.get_data(parse_form_data=True)
+    x=ast.literal_eval(x.decode("utf-8"))
+    country=int(x['country'][0])
+    print("country: ", country)
+    
+
+    data=countries.get_all_inst_per_countries(country)
+    resp={}
+    resp['institutions']=data
+    resp=jsonify(resp)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=3000)

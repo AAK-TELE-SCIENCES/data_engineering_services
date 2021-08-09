@@ -351,3 +351,28 @@ def get_best_countries_for_field(field_type,sort_by="average"):
         return {v[0]:[v[1],v[2]] for k,v in sub_df.items()}
     else:
         return {}
+
+def get_country_names():
+    "returns the name of countries without abbreviations"
+    df_con=pd.read_csv("new_data/wikipedia-iso-country-codes.csv") # read the country info csv
+    try:
+        sql="select DISTINCT(country) from h2020_sci_score_per_country"
+        sci_con = pd.read_sql(sql, db_connection) 
+        countries=sci_con['country'].values.tolist() # get all country codes
+        df_con=df_con.loc[df_con['Alpha-2 code'].isin(countries)] 
+        return df_con['English short name lower case'].values.tolist() # return corresponding full names
+    except Exception as e:
+        print("EXC: ", e)
+        return []
+
+def get_all_inst_per_countries(country_name):
+    "returns the insts found in a country"
+    df_con=pd.read_csv("new_data/wikipedia-iso-country-codes.csv")
+    try: # get country code from the given country name
+        country_code=df_con.loc[df_con['English short name lower case']==country_name]['Alpha-2 code'].values[0]
+        sql="select name from eu_organizations where country='"+country_code+"'"
+        df1 = pd.read_sql(sql, db_connection)
+        return df1['name'].values.tolist() # return all inst against the country code found
+    except Exception as e:
+        print("EXC: ", e)
+        return []

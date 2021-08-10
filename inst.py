@@ -192,3 +192,12 @@ def get_inst_info(inst):
     
     return data
 
+
+def get_inst_name_by_activity_type(act_type):
+    "returns the insts of the given act_type"
+    sql="""
+    select * from eu_organizations
+    """
+    df = pd.read_sql(sql, db_connection)
+
+    return df.loc[df['activity_type']==act_type].name.values.tolist()

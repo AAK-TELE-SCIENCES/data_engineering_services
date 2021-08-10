@@ -320,5 +320,23 @@ def get_all_inst_per_countries():
     resp.headers.add('Access-Control-Allow-Origin', '*')
     return resp
 
+
+@app.route('/get_inst_name_by_activity_type', methods=['POST'])
+def get_inst_name_by_activity_type():
+    "returns the insts of the given act_type"
+    
+    x=request.get_data(parse_form_data=True)
+    x=ast.literal_eval(x.decode("utf-8"))
+    act_type=x['act_type']
+    print("act_type: ", act_type)
+    
+
+    data=inst.get_inst_name_by_activity_type(act_type)
+    resp={}
+    resp['institutions']=data
+    resp=jsonify(resp)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
+
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=3000)

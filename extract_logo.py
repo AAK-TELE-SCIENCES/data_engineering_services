@@ -8,7 +8,7 @@ from tqdm import tqdm
 import requests
 import shutil
 import base64
-
+import os
 
 
 name="aak_maindb"
@@ -42,6 +42,10 @@ data['name']=[]
 data['homepage_url']=[]
 data['base64_img']=[]
 
+try:
+    os.mkdir("logo_images/")
+except:
+    pass
 
 base_url="https://logo.clearbit.com/" # clearbit used to download logo
 with tqdm(total=len(df)) as pbar:
@@ -53,12 +57,12 @@ with tqdm(total=len(df)) as pbar:
         r = requests.get(url = new_url, stream=True) # get logo
         try:
             if r.status_code==200: # if logo found
-                with open('img.png', 'wb') as out_file:
+                with open('logo_images/'+data['name']+'.png', 'wb') as out_file:
                     shutil.copyfileobj(r.raw, out_file)
                 data['name'].append(row['name'])
                 data['homepage_url'].append(row['homepage_url'])
 
-                with open('img.png', "rb") as image_file:
+                with open('logo_images/'+data['name']+'.png', "rb") as image_file:
                     encoded_string = base64.b64encode(image_file.read()) # get base64 from image
                 data['base64_img'].append(encoded_string)
         except Exception as e:

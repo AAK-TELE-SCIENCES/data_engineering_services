@@ -54,8 +54,8 @@ with tqdm(total=len(df)) as pbar:
         url=url.replace('https://','') # clean the url
         new_url=base_url+url
         
-        r = requests.get(url = new_url, stream=True) # get logo
         try:
+            r = requests.get(url = new_url, stream=True) # get logo
             if r.status_code==200: # if logo found
                 with open('logo_images/'+data['name']+'.png', 'wb') as out_file:
                     shutil.copyfileobj(r.raw, out_file)

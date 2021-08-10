@@ -57,12 +57,12 @@ with tqdm(total=len(df)) as pbar:
         try:
             r = requests.get(url = new_url, stream=True) # get logo
             if r.status_code==200: # if logo found
-                with open('logo_images/'+data['name']+'.png', 'wb') as out_file:
+                with open('logo_images/'+row['name']+'.png', 'wb') as out_file:
                     shutil.copyfileobj(r.raw, out_file)
                 data['name'].append(row['name'])
                 data['homepage_url'].append(row['homepage_url'])
 
-                with open('logo_images/'+data['name']+'.png', "rb") as image_file:
+                with open('logo_images/'+row['name']+'.png', "rb") as image_file:
                     encoded_string = base64.b64encode(image_file.read()) # get base64 from image
                 data['base64_img'].append(encoded_string)
         except Exception as e:

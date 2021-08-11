@@ -36,8 +36,13 @@ def get_company_url(): # to get url and name of companies
 
 df=get_company_url()
 
+print("full df shape: ", df.shape)
+
 print("unique names: ", len(df['name'].unique()))
 print("unique urls: ", len(df['homepage_url'].unique()))
+print("----")
+print("unique names: ", len(set(df['name'].values)))
+print("unique urls: ", len(set(df['homepage_url'].values)))
 
 exit()
 data={} # to store csv of images and companies

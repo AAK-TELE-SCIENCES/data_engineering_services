@@ -58,11 +58,15 @@ base_url="https://logo.clearbit.com/" # clearbit used to download logo
 
 names_done=[]
 
+non_names=0
+
 with tqdm(total=len(df)) as pbar:
     for i,row in df.iterrows():
         url=row['homepage_url'].replace('http://','')
         url=url.replace('https://','') # clean the url
         new_url=base_url+url
+        if row['name']=="" or row['name']==None: # if no name given
+            non_names+=1
         if row['name'] not in names_done:
             try:
                 r = requests.get(url = new_url, stream=True) # get logo
@@ -87,3 +91,10 @@ print("df1: ", df1.shape)
 df1.to_csv("company_logos1.csv")
 
 print("names found: ", names_done)
+
+import pickle
+
+with open('unique_company_names.pickle', 'wb') as handle:
+    pickle.dump(names_done, handle)
+
+print("null names: ", non_names)

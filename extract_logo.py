@@ -44,7 +44,6 @@ print("----")
 print("unique names: ", len(set(df['name'].values)))
 print("unique urls: ", len(set(df['homepage_url'].values)))
 
-exit()
 data={} # to store csv of images and companies
 data['name']=[]
 data['homepage_url']=[]
@@ -56,29 +55,35 @@ except:
     pass
 
 base_url="https://logo.clearbit.com/" # clearbit used to download logo
+
+names_done=[]
+
 with tqdm(total=len(df)) as pbar:
     for i,row in df.iterrows():
         url=row['homepage_url'].replace('http://','')
         url=url.replace('https://','') # clean the url
         new_url=base_url+url
-        
-        try:
-            r = requests.get(url = new_url, stream=True) # get logo
-            if r.status_code==200: # if logo found
-                with open('logo_images/'+row['name']+'.png', 'wb') as out_file:
-                    shutil.copyfileobj(r.raw, out_file)
-                data['name'].append(row['name'])
-                data['homepage_url'].append(row['homepage_url'])
+        if row['name'] not in names_done:
+            try:
+                r = requests.get(url = new_url, stream=True) # get logo
+                if r.status_code==200: # if logo found
+                    with open('logo_images/'+row['name']+'.png', 'wb') as out_file:
+                        shutil.copyfileobj(r.raw, out_file)
+                    data['name'].append(row['name'])
+                    data['homepage_url'].append(row['homepage_url'])
 
-                with open('logo_images/'+row['name']+'.png', "rb") as image_file:
-                    encoded_string = base64.b64encode(image_file.read()) # get base64 from image
-                data['base64_img'].append(encoded_string)
-        except Exception as e:
-            print("EXC: ", e)
-            pass
+                    with open('logo_images/'+row['name']+'.png', "rb") as image_file:
+                        encoded_string = base64.b64encode(image_file.read()) # get base64 from image
+                    data['base64_img'].append(encoded_string)
+                    names_done.append(row['name']) # to keep track of all the names
+            except Exception as e:
+                print("EXC: ", e)
+                pass
         pbar.update(1)
 
 df1=pd.DataFrame(data)
 print("df1: ", df1.shape)
 
-df1.to_csv("company_logos.csv")
+df1.to_csv("company_logos1.csv")
+
+print("names found: ", names_done)

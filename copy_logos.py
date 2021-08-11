@@ -36,7 +36,12 @@ def write_b64(b64,file_name):
         f.write(imgdata)
 
 
-dest="C:\inetpub\aak-integration\w12\icons\private-institutions"
+dest="logos"
+
+try:
+    os.mkdir(dest)
+except:
+    pass
 
 chunksize = 200000
 with pd.read_csv("company_logos.csv", chunksize=chunksize) as reader:

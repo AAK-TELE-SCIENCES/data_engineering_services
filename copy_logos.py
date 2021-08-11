@@ -47,6 +47,8 @@ chunksize = 200000
 with pd.read_csv("company_logos.csv", chunksize=chunksize) as reader:
     for chunk in reader:
         print("shape of chunk: ", chunk.shape)
+        print("unique names: ", len(chunk['name'].unique()))
+        '''
         with tqdm(total=len(chunk)) as pbar:
             for i,row in chunk.iterrows():
                 b64=str(row['base64_img'])
@@ -54,3 +56,4 @@ with pd.read_csv("company_logos.csv", chunksize=chunksize) as reader:
                 name=dest+"/"+name+".jpg"
                 write_b64(b64,name)
                 pbar.update(1)
+        '''

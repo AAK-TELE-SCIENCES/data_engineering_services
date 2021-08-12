@@ -28,8 +28,7 @@ def get_sci_name_from_column(col_name):
     except Exception as e:
         #print("EXC: ", e)
         return ""
-    
-    
+
     
 def get_sic_name_from_column(col_name):
     sql="""
@@ -49,12 +48,14 @@ def get_inst_stats_for_field(field):
     if col!="":
         sql="select "+col+" from h2020_sci_scores_per_inst where "+col+"!=0"
         df = pd.read_sql(sql, db_connection)
+        df[col]=pd.to_numeric(df[col])
         return df[col].mean(), df[col].std()
 
     col,f=sic_per_country.get_sic_column_data_from_field(field)
     if col!="":
         sql="select "+col+" from h2020_sic_scores_per_inst where "+col+"!=0"
         df = pd.read_sql(sql, db_connection)
+        df[col]=pd.to_numeric(df[col])
         return df[col].mean(), df[col].std()
 
 

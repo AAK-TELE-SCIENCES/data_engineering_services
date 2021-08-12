@@ -66,15 +66,17 @@ def get_country_stats_for_field(field):
     if col!="":
         sql="select "+col+" from h2020_sci_scores_per_country where "+col+"!=0"
         df = pd.read_sql(sql, db_connection)
+        df[col]=pd.to_numeric(df[col])
         return df[col].mean(), df[col].std()
 
     col,f=sic_per_country.get_sic_column_data_from_field(field)
     if col!="":
         sql="select "+col+" from h2020_sic_scores_per_country where "+col+"!=0"
         df = pd.read_sql(sql, db_connection)
+        df[col]=pd.to_numeric(df[col])
         return df[col].mean(), df[col].std()
 
-    
+
 
 def get_sic_scores_per_country(country):
     sql="select * from h2020_sic_scores_per_country where country='"+country+"'"
@@ -251,7 +253,7 @@ def get_countries_info(con):
 
 def get_top_countries_from_inst(values):
     country_scores={}
-    for val in values:
+    for val in values: # inst and its score -> val
         con=get_country_of_inst(val[0])
         if con!="":
             try:
@@ -261,9 +263,9 @@ def get_top_countries_from_inst(values):
                 country_scores[con]['num_insts']=0
                 country_scores[con]['num_insts']+=1
             try:
-                country_scores[con]['average']=val[1]+country_scores[con]['average']
+                country_scores[con]['average']=float(val[1])+float(country_scores[con]['average'])
             except:
-                country_scores[con]['average']=val[1]
+                country_scores[con]['average']=float(val[1])
     for k,v in country_scores.items():
         country_scores[k]['average']=float(country_scores[k]['average'])/float(country_scores[k]['num_insts'])
     return country_scores
@@ -279,9 +281,9 @@ def get_best_insts(field_name):
         sci=get_sci_score_from_inst_per_field(col)
         sci=sci.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
         sci=sci.dropna()
-        sci=sci.sort_values(col,ascending=False)
+        sci=sci.sort_values(col,ascending=False) # sort in desc order
         sci=dict(sci.values)
-        values= take(10, sci.items())
+        values= take(10, sci.items()) # take top 10 values
         cons=get_top_countries_from_inst(values)
         return values, cons
     elif col!="": # sic
@@ -290,7 +292,7 @@ def get_best_insts(field_name):
         sic=sic.dropna()
         sic=sic.sort_values(col,ascending=False)
         sic=dict(sic.values)
-        values= take(10, sic.items())
+        values= take(10, sic.items())  # take top 10 values
         cons=get_top_countries_from_inst(values)
         return values, cons
     else: # no data found

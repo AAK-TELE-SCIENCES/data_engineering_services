@@ -141,6 +141,9 @@ def get_inst_info(inst):
     major_cols=major_fields.column_id.values
     
     sub_df=sic[minor_cols]
+    cols = sub_df.columns # convert columns to numeric
+    sub_df[cols] = sub_df[cols].apply(pd.to_numeric, errors='coerce')
+
     sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
     cols=list(sub_df)
     data['sic']={}
@@ -153,6 +156,8 @@ def get_inst_info(inst):
         data['sic']['minor_global_average'][get_sic_name_from_column(col)]=get_inst_stats_for_field(get_sic_name_from_column(col))[0]
     
     sub_df=sic[major_cols]
+    cols = sub_df.columns # convert columns to numeric
+    sub_df[cols] = sub_df[cols].apply(pd.to_numeric, errors='coerce')
     sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
     cols=list(sub_df)
     data['sic']['major']={}
@@ -171,6 +176,8 @@ def get_inst_info(inst):
     major_cols=major_fields.column_id.values
     
     sub_df=sci[minor_cols]
+    cols = sub_df.columns # convert columns to numeric
+    sub_df[cols] = sub_df[cols].apply(pd.to_numeric, errors='coerce')
     sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
     cols=list(sub_df)
     data['sci']={}
@@ -182,6 +189,8 @@ def get_inst_info(inst):
         data['sci']['minor_global_average'][get_sci_name_from_column(col)]=get_inst_stats_for_field(get_sci_name_from_column(col))[0]
     
     sub_df=sic[major_cols]
+    cols = sub_df.columns # convert columns to numeric
+    sub_df[cols] = sub_df[cols].apply(pd.to_numeric, errors='coerce')
     sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
     cols=list(sub_df)
     data['sci']['major']={}

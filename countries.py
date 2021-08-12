@@ -199,6 +199,8 @@ def get_countries_info(con):
     major_cols=major_fields.column_id.values
     
     sub_df=sic[minor_cols]
+    cols = sub_df.columns # convert columns to numeric
+    sub_df[cols] = sub_df[cols].apply(pd.to_numeric, errors='coerce')
     sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
     cols=list(sub_df)
     data['sic']={}
@@ -211,6 +213,8 @@ def get_countries_info(con):
         data['sic']['minor_global_average'][get_sic_name_from_column(col)]=get_country_stats_for_field(get_sic_name_from_column(col))[0]
     
     sub_df=sic[major_cols]
+    cols = sub_df.columns # convert columns to numeric
+    sub_df[cols] = sub_df[cols].apply(pd.to_numeric, errors='coerce')
     sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
     cols=list(sub_df)
     data['sic']['major']={}
@@ -229,6 +233,9 @@ def get_countries_info(con):
     major_cols=major_fields.column_id.values
     
     sub_df=sci[minor_cols]
+    cols = sub_df.columns # convert columns to numeric
+    sub_df[cols] = sub_df[cols].apply(pd.to_numeric, errors='coerce')
+    
     sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
     cols=list(sub_df)
     data['sci']={}
@@ -241,6 +248,8 @@ def get_countries_info(con):
         data['sci']['minor_global_average'][get_sci_name_from_column(col)]=get_country_stats_for_field(get_sci_name_from_column(col))[0]
     
     sub_df=sic[major_cols]
+    cols = sub_df.columns # convert columns to numeric
+    sub_df[cols] = sub_df[cols].apply(pd.to_numeric, errors='coerce')
     sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
     cols=list(sub_df)
     data['sci']['major']={}
@@ -279,6 +288,7 @@ def get_best_insts(field_name):
         if col=="": # no data found
             return {}
         sci=get_sci_score_from_inst_per_field(col)
+        
         sci=sci.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
         sci=sci.dropna()
         sci=sci.sort_values(col,ascending=False) # sort in desc order

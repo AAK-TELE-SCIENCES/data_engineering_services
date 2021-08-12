@@ -265,7 +265,7 @@ def get_top_countries_from_inst(values):
             except:
                 country_scores[con]['average']=val[1]
     for k,v in country_scores.items():
-        country_scores[k]['average']=country_scores[k]['average']/country_scores[k]['num_insts']
+        country_scores[k]['average']=float(country_scores[k]['average'])/float(country_scores[k]['num_insts'])
     return country_scores
 
 def get_best_insts(field_name):

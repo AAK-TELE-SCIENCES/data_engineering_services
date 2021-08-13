@@ -67,8 +67,15 @@ def get_average_major_and_minor_score_per_country():
     df1=get_sic_scores_major_and_minor_fields_col_dic()
     
     all_countries=list(df.country.unique())
-    #all_countries.remove("None")
-    all_countries.remove(None)
+    try:
+        all_countries.remove("None")
+    except:
+        pass
+
+    try:
+        all_countries.remove(None)
+    except:
+        pass
     minor_fields=df1.loc[df1['field_scope']=="Minor Field"]
     major_fields=df1.loc[df1['field_scope']=="Major Field"]
     
@@ -83,6 +90,9 @@ def get_average_major_and_minor_score_per_country():
             continue
         sub_df=df.loc[df['country']==country]
         sub_df=sub_df[minor_cols]
+        cols = sub_df.columns # convert columns to numeric
+        sub_df[cols] = sub_df[cols].apply(pd.to_numeric, errors='coerce')
+
         sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
         
         sum_minor=sum(list(sub_df.values[0])) # get minor average
@@ -99,6 +109,9 @@ def get_average_major_and_minor_score_per_country():
         
         sub_df=df.loc[df['country']==country]
         sub_df=sub_df[major_cols]
+        cols = sub_df.columns # convert columns to numeric
+        sub_df[cols] = sub_df[cols].apply(pd.to_numeric, errors='coerce')
+        
         sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
         
         
@@ -151,6 +164,9 @@ def get_average_major_and_minor_sic_for_all_insts():
             sub_df=get_sic_scores_per_inst(inst)
 
             sub_df=sub_df[minor_cols]
+            cols = sub_df.columns # convert columns to numeric
+            sub_df[cols] = sub_df[cols].apply(pd.to_numeric, errors='coerce')
+        
             sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
 
             sum_minor=sum(list(sub_df.values[0])) # get minor average
@@ -166,6 +182,9 @@ def get_average_major_and_minor_sic_for_all_insts():
 
             sub_df=get_sic_scores_per_inst(inst)
             sub_df=sub_df[major_cols]
+            cols = sub_df.columns # convert columns to numeric
+            sub_df[cols] = sub_df[cols].apply(pd.to_numeric, errors='coerce')
+
             sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
 
 
@@ -219,6 +238,9 @@ def get_average_major_and_minor_sic_per_inst(inst_name=[]):
                 continue
             sub_df=get_sic_scores_per_inst(inst)
             sub_df=sub_df[minor_cols]
+            cols = sub_df.columns # convert columns to numeric
+            sub_df[cols] = sub_df[cols].apply(pd.to_numeric, errors='coerce')
+
             sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
             
             try:
@@ -238,6 +260,9 @@ def get_average_major_and_minor_sic_per_inst(inst_name=[]):
 
             sub_df=get_sic_scores_per_inst(inst)
             sub_df=sub_df[major_cols]
+            cols = sub_df.columns # convert columns to numeric
+            sub_df[cols] = sub_df[cols].apply(pd.to_numeric, errors='coerce')
+            
             sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
 
             try:

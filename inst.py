@@ -74,7 +74,13 @@ def compare_insts(inst_name=[],fields=[]):
         for f in fields: # for all the given fields
             col,field=sic_per_country.get_sic_column_data_from_field(f)
             if col!="" and field!="": # if sic, populate in sic json
-                sic1=sic[[col]].values[0][0]
+                try:
+                    sic1=sic[[col]].values[0][0]
+                except Exception as e:
+                    print("EXC: ", e)
+                    print("col: ", col)
+                    print(inst)
+                
                 if sic1==0: # to filter 0s
                     try:
                         zero_vals['sic'+"-"+field+"_"+f+"-"+str(sic1)]+=1
@@ -82,14 +88,19 @@ def compare_insts(inst_name=[],fields=[]):
                         zero_vals['sic'+"-"+field+"_"+f+"-"+str(sic1)]=0
                         zero_vals['sic'+"-"+field+"_"+f+"-"+str(sic1)]+=1
                 try:
-                    data[inst]['sic'][field].append({f:sic1})
+                    data[inst]['sic'][field].append({f:float(sic1)})
                 except Exception as e:
                     data[inst]['sic'][field]=[]
-                    data[inst]['sic'][field].append({f:sic1})
+                    data[inst]['sic'][field].append({f:float(sic1)})
             
             col,field=sci_per_country.get_column_data_from_field(f)
             if col!="" and field!="": # if sci, populate in sci json
-                sci1=sci[[col]].values[0][0]
+                try:
+                    sci1=sci[[col]].values[0][0]
+                except Exception as e:
+                    print("EXC: ", e)
+                    print("col: ", col)
+                    print(inst)
                 if sci1==0: # to filter 0s
                     try:
                         zero_vals['sci'+"-"+field+"_"+f+"-"+str(sci1)]+=1
@@ -97,10 +108,10 @@ def compare_insts(inst_name=[],fields=[]):
                         zero_vals['sci'+"-"+field+"_"+f+"-"+str(sci1)]=0
                         zero_vals['sci'+"-"+field+"_"+f+"-"+str(sci1)]+=1
                 try:
-                    data[inst]['sci'][field].append({f:sci1})
+                    data[inst]['sci'][field].append({f:float(sci1)})
                 except:
                     data[inst]['sci'][field]=[]
-                    data[inst]['sci'][field].append({f:sci1})
+                    data[inst]['sci'][field].append({f:float(sci1)})
     
     data['averages']={}
     data['std_dev']={}

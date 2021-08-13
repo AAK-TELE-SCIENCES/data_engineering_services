@@ -30,7 +30,7 @@ db_connection_str = db_string
 db_connection = create_engine(db_connection_str,connect_args= connect_args)
 
 def get_company_url(): # to get url and name of companies
-    sql="SELECT name,homepage_url FROM new_companies"
+    sql="SELECT name,homepage_url FROM company_names"
     df = pd.read_sql(sql, db_connection)
     return df
 

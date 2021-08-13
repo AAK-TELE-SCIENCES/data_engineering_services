@@ -12,7 +12,7 @@ from matplotlib import pyplot as plt
 matplotlib.pyplot.switch_backend('Agg') 
 import sic_per_country
 import sci_per_country
-import inst, countries, world_bank, companies
+import inst, countries, world_bank, companies, investors
 CORS(app, support_credentials=True)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -337,6 +337,25 @@ def get_inst_name_by_activity_type():
     resp=jsonify(resp)
     resp.headers.add('Access-Control-Allow-Origin', '*')
     return resp
+
+
+@app.route('/get_investors_sic_info', methods=['POST'])
+def get_investors_sic_info():
+    "returns the investors sic info"
+    
+    x=request.get_data(parse_form_data=True)
+    x=ast.literal_eval(x.decode("utf-8"))
+    name=x['investor_name']
+    print("name: ", name)
+    
+    data=investors.get_investors_sic_info(name)
+    resp={}
+    resp['countries']=data
+    resp=jsonify(resp)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=3000)

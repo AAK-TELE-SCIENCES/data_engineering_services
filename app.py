@@ -349,8 +349,7 @@ def get_investors_sic_info():
     print("name: ", name)
     
     data=investors.get_investors_sic_info(name)
-    resp={}
-    resp['countries']=data
+    resp=data
     resp=jsonify(resp)
     resp.headers.add('Access-Control-Allow-Origin', '*')
     return resp

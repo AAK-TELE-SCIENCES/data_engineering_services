@@ -63,18 +63,17 @@ def get_investors_sic_info(investor_name):
     
     data={}
     
-    data[investor_name]={}
     for col in cols:
         if col=="CIK":
             continue
         try:
             val=float(df[col].values[0])
             col_desc=get_sci_name_from_column(col)
-            data[investor_name][col_desc]={}
-            data[investor_name][col_desc]['value']=df[col].values[0]
+            data[col_desc]={}
+            data[col_desc]['value']=df[col].values[0]
             avg,std=get_stats_for_column(col)
-            data[investor_name][col_desc]['average']=avg
-            data[investor_name][col_desc]['std_dev']=std
+            data[col_desc]['average']=avg
+            data[col_desc]['std_dev']=std
         except:
             continue
     return data

@@ -58,7 +58,7 @@ try:
 except:
     pass
 
-df=df[:2880553] # resume after interruption
+df=df[2880553:] # resume after interruption
 
 base_url="https://logo.clearbit.com/" # clearbit used to download logo
 count=0

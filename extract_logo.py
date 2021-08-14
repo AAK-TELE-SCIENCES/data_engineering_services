@@ -58,14 +58,12 @@ try:
 except:
     pass
 
+df=df[:2880553] # resume after interruption
+
 base_url="https://logo.clearbit.com/" # clearbit used to download logo
 count=0
 with tqdm(total=len(df)) as pbar:
     for i,row in df.iterrows():
-        if count<2880553:
-            pbar.update(1)
-            count+=1
-            continue
         url=row['homepage_url'].replace('http://','')
         url=url.replace('https://','') # clean the url
         new_url=base_url+url
@@ -83,7 +81,6 @@ with tqdm(total=len(df)) as pbar:
         except Exception as e:
             print("EXC: ", e)
             pass
-        count+=1
         pbar.update(1)
 
 df1=pd.DataFrame(data)

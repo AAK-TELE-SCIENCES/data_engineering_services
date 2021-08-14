@@ -62,6 +62,9 @@ base_url="https://logo.clearbit.com/" # clearbit used to download logo
 
 with tqdm(total=len(df)) as pbar:
     for i,row in df.iterrows():
+        if i<2880553:
+            pbar.update(1)
+            continue
         url=row['homepage_url'].replace('http://','')
         url=url.replace('https://','') # clean the url
         new_url=base_url+url

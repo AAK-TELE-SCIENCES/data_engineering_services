@@ -140,8 +140,8 @@ def get_sci_scores_per_inst(inst_name):
     where replace(inst_name, '\"', '') ='"""+inst_name+"""'"""
     
     df = pd.read_sql(sql, db_connection)
-    if len(df)>0:
-        return df.iloc[0]
+    if len(df)>0: # delete all rows except 1st due to data inconsistency issues
+        return df.drop(df.index[1:])
     return df
 
 

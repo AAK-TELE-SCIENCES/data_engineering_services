@@ -392,7 +392,7 @@ def get_all_inst_per_countries(country_name):
 
 def get_project_info_investors(project_acronym=''):
     "returns the total ec contribution"
-    sql="SELECT * FROM h2020_projects_organization"
+    sql="SELECT * FROM h2020_projects_organization where projectAcronym = '"+ project_acronym +"'"
     df = pd.read_sql(sql, db_connection)
     data={}
     sub_df=df.loc[df['projectAcronym']==project_acronym] # select data for the acronym given

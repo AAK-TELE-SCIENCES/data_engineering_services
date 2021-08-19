@@ -360,7 +360,7 @@ def get_project_info_investors():
     
     x=request.get_data(parse_form_data=True)
     x=ast.literal_eval(x.decode("utf-8"))
-    project_acronym=x['project_acronym']
+    project_acronym=x['project_acronym'][0]
     print("project_acronym: ", project_acronym)
     
     data=countries.get_project_info_investors(project_acronym)

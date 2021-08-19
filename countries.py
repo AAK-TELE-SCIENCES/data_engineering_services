@@ -187,6 +187,15 @@ def compare_countries(country_name=[],fields=[]):
 # for a given country, make graph of all the fields that are non zero (can take fields as input)
 
 def get_countries_info(con):
+    "returns the info of the given country"
+
+    # convert country name to country code
+
+    df_con=pd.read_csv("new_data/wikipedia-iso-country-codes.csv") # read the country info csv
+    df_con=df_con.loc[df_con['English short name lower case']==con]
+    con=df_con['Alpha-2 code'].values[0]
+    print("con: ", con)
+
     sic=get_sic_scores_per_country(con)
     sci=get_sci_scores_per_country(con)
     data={}

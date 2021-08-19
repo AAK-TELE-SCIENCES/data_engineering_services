@@ -45,7 +45,7 @@ def get_sic_column_data_from_field(col):
         df1 = pd.read_sql(sql, db_connection)
         return df1['column_id'].values[0], df1['field_scope'].values[0]
     except Exception as e:
-        print("EXC: ", e)
+        #print("EXC: ", e)
         return "",""
 
 
@@ -137,6 +137,8 @@ def get_sic_scores_per_inst(inst_name):
     where replace(inst_name, '\"', '') ='"""+inst_name+"""'"""
     
     df = pd.read_sql(sql, db_connection)
+    if len(df)>0:
+        return df.iloc[0]
     return df
 
 

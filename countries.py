@@ -388,3 +388,29 @@ def get_all_inst_per_countries(country_name):
     except Exception as e:
         print("EXC: ", e)
         return []
+
+
+def get_project_info_investors(project_acronym=''):
+    "returns the total ec contribution"
+    sql="SELECT * FROM h2020_projects_organization"
+    df = pd.read_sql(sql, db_connection)
+    data={}
+    sub_df=df.loc[df['projectAcronym']==project_acronym] # select data for the acronym given
+    data['sum_ecContribution']=sub_df['ecContribution'].sum()
+    counts=sub_df['activityType'].value_counts().to_dict()
+    data['activity_type']={}
+    for k,v in counts.items():
+        data['activity_type'][k]=v # get unique activity types and their counts
+    
+    
+    counts=sub_df['role'].value_counts().to_dict() # get unique roles and their counts
+    data['role']={}
+    for k,v in counts.items():
+        data['role'][k]=v
+        
+        
+    counts=sub_df['country'].value_counts().to_dict() # unique countries and their counts
+    data['country']={}
+    for k,v in counts.items():
+        data['country'][k]=v
+    return data

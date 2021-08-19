@@ -354,7 +354,20 @@ def get_investors_sic_info():
     resp.headers.add('Access-Control-Allow-Origin', '*')
     return resp
 
-
+@app.route('/get_project_info_investors', methods=['POST'])
+def get_project_info_investors():
+    "returns the projects info from investors"
+    
+    x=request.get_data(parse_form_data=True)
+    x=ast.literal_eval(x.decode("utf-8"))
+    project_acronym=x['project_acronym']
+    print("project_acronym: ", project_acronym)
+    
+    data=countries.get_project_info_investors(project_acronym)
+    resp=data
+    resp=jsonify(resp)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=3000)

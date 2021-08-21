@@ -7,7 +7,8 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
-
+import copy
+    
 name="aak_maindb"
 user="aak_maindbusr"
 pwd="AakDBUsr#2021"
@@ -45,6 +46,9 @@ def get_investor_inst_data(inst_name):
 def get_investor_inst_relation(inst_name):
     "returns the investors and inst's relationship"
     sub_df=get_investor_inst_data(inst_name)
+    to_remove=['ID', 'contactType','contactTitle','contactFirstNames','contactLastNames','contactTelephoneNumber']
+    final_list = list(set(sub_df) - set(to_remove))
+    sub_df=sub_df.drop_duplicates(subset=final_list) # drop same rows
     data={}
     for project in sub_df.projectAcronym.unique(): # for all projects
         sub_df1=sub_df.loc[sub_df['projectAcronym']==project]

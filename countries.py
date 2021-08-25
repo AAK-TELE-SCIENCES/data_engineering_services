@@ -377,7 +377,7 @@ def get_country_names():
     "returns the name of countries without abbreviations"
     df_con=pd.read_csv("new_data/wikipedia-iso-country-codes.csv") # read the country info csv
     try:
-        sql="select DISTINCT(country) from h2020_sci_score_per_country"
+        sql="select DISTINCT(country) from h2020_sci_scores_per_country"
         sci_con = pd.read_sql(sql, db_connection) 
         countries=sci_con['country'].values.tolist() # get all country codes
         df_con=df_con.loc[df_con['Alpha-2 code'].isin(countries)] 

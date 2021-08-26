@@ -396,6 +396,7 @@ def get_researchers_info_investors():
     
     data=researchers.get_project_info_investors(project)
     resp=data
+    print("resp: ", resp)
     resp=jsonify(resp)
     resp.headers.add('Access-Control-Allow-Origin', '*')
     return resp

@@ -88,7 +88,9 @@ def get_project_info_investors(project_acronym=''):
     "returns the total ec contribution for projects and link with inst"
     data={}
     sub_df=get_projects_organization_h2020(project_acronym)
-    data['sum_ecContribution']=sub_df['ecContribution'].sum() # total ec contribution
+
+    sub_df['ecContribution']=pd.to_numeric(sub_df['ecContribution'])
+    data['sum_ecContribution']=sum(sub_df['ecContribution'].values.tolist()) # total ec contribution
     
     data['project_id']=sub_df['projectID'].unique()[0]
     counts=sub_df['activityType'].value_counts().to_dict()  # total activityTypes count
@@ -122,3 +124,5 @@ def get_project_info_investors(project_acronym=''):
     
     data['researchers'],data['global_researcher_stats']=get_researchers_info_from_project(data['project_id']) # get researchers and publications
     return data
+
+print(get_project_info_investors("Rheform"))

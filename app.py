@@ -369,7 +369,6 @@ def get_project_info_investors():
     resp.headers.add('Access-Control-Allow-Origin', '*')
     return resp
 
-get_project_info_investors
 @app.route('/get_investor_inst_relation', methods=['POST'])
 def get_investor_inst_relation():
     "returns the investors relation with the inst"
@@ -386,8 +385,8 @@ def get_investor_inst_relation():
     return resp
 
 
-@app.route('/get_project_info_investors', methods=['POST'])
-def get_project_info_investors():
+@app.route('/get_researchers_info_investors', methods=['POST'])
+def get_researchers_info_investors():
     "returns the investors relation with the inst and researchers"
     
     x=request.get_data(parse_form_data=True)

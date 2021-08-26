@@ -63,10 +63,10 @@ def get_researchers_info_from_project(project_id):
         total_researchers.append(x['authors'])
         total_publications.append(x['publication_title'])
         x['journal_title']=row['journalTitle']
-        x['published_year']=row['publishedYear']
+        x['published_year']=int(row['publishedYear'])
         try: # get h_index of journal
             sub_df1=df1.loc[(df1['year']==row['publishedYear']) & (df1['title']==row['journalTitle'])]
-            x['h_index']=sub_df1['h_index'].values[0]
+            x['h_index']=int(sub_df1['h_index'].values[0])
         except Exception as e:
             try:
                 sub_df1=df1.loc[(df1['year']==row['publishedYear']) & (df1['title']==row['journalTitle']+", "+str(row['publishedYear']))]
@@ -120,5 +120,5 @@ def get_project_info_investors(project_acronym=''):
         data['institutions'].append(x)
     
     
-    #data['researchers'],data['global_researcher_stats']=get_researchers_info_from_project(data['project_id']) # get researchers and publications
+    data['researchers'],data['global_researcher_stats']=get_researchers_info_from_project(data['project_id']) # get researchers and publications
     return data

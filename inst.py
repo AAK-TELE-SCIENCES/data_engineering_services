@@ -169,7 +169,7 @@ def get_inst_info(inst):
     sub_df=sic[major_cols]
     cols = sub_df.columns # convert columns to numeric
     sub_df[cols] = sub_df[cols].apply(pd.to_numeric, errors='coerce')
-    sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all")# removing 0s
+    sub_df=sub_df.replace(0,np.nan).dropna(axis=1,how="all") # removing 0s
     cols=list(sub_df)
     data['sic']['major']={}
     data['sic']['major_global_average']={}

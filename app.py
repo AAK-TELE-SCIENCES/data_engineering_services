@@ -12,7 +12,7 @@ from matplotlib import pyplot as plt
 matplotlib.pyplot.switch_backend('Agg') 
 import sic_per_country
 import sci_per_country
-import inst, countries, world_bank, companies, investors
+import inst, countries, world_bank, companies, investors, researchers
 CORS(app, support_credentials=True)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -369,7 +369,7 @@ def get_project_info_investors():
     resp.headers.add('Access-Control-Allow-Origin', '*')
     return resp
 
-
+get_project_info_investors
 @app.route('/get_investor_inst_relation', methods=['POST'])
 def get_investor_inst_relation():
     "returns the investors relation with the inst"
@@ -380,6 +380,22 @@ def get_investor_inst_relation():
     print("inst: ", inst)
     
     data=investors.get_investor_inst_relation(inst)
+    resp=data
+    resp=jsonify(resp)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
+
+
+@app.route('/get_project_info_investors', methods=['POST'])
+def get_project_info_investors():
+    "returns the investors relation with the inst and researchers"
+    
+    x=request.get_data(parse_form_data=True)
+    x=ast.literal_eval(x.decode("utf-8"))
+    project=x['project'][0]
+    print("project: ", project)
+    
+    data=researchers.get_project_info_investors(project)
     resp=data
     resp=jsonify(resp)
     resp.headers.add('Access-Control-Allow-Origin', '*')

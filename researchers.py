@@ -70,15 +70,15 @@ def get_researchers_info_from_project(project_id):
         except Exception as e:
             try:
                 sub_df1=df1.loc[(df1['year']==row['publishedYear']) & (df1['title']==row['journalTitle']+", "+str(row['publishedYear']))]
-                x['h_index']=sub_df1['h_index'].values[0]
+                x['h_index']=int(sub_df1['h_index'].values[0])
             except Exception as e:
-                x['h_index']=None
+                x['h_index']="None"
         x['published_as']=row['isPublishedAs']
         data.append(x)
     
     total_researchers=[item for sublist in total_researchers for item in sublist]
-    global_stats['total_researchers']=len(set(total_researchers))
-    global_stats['total_publications']=len(set(total_publications))
+    global_stats['total_researchers']=int(len(set(total_researchers)))
+    global_stats['total_publications']=int(len(set(total_publications)))
     
     return data,global_stats
 
@@ -122,5 +122,3 @@ def get_project_info_investors(project_acronym=''):
     
     data['researchers'],data['global_researcher_stats']=get_researchers_info_from_project(data['project_id']) # get researchers and publications
     return data
-
-print(get_project_info_investors("Rheform"))

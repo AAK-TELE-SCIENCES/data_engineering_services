@@ -120,5 +120,5 @@ def get_project_info_investors(project_acronym=''):
         data['institutions'].append(x)
     
     
-    data['researchers'],data['global_researcher_stats']=get_researchers_info_from_project(data['project_id']) # get researchers and publications
+    #data['researchers'],data['global_researcher_stats']=get_researchers_info_from_project(data['project_id']) # get researchers and publications
     return data

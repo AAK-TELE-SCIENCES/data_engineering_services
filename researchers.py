@@ -90,7 +90,9 @@ def get_project_info_investors(project_acronym=''):
     sub_df=get_projects_organization_h2020(project_acronym)
 
     sub_df['ecContribution']=pd.to_numeric(sub_df['ecContribution'])
-    data['sum_ecContribution']=sum(sub_df['ecContribution'].values.tolist()) # total ec contribution
+    vals=sub_df['ecContribution'].values.tolist()
+    vals= [x for x in vals if ~np.isnan(x)] # remove nans
+    data['sum_ecContribution']=sum(vals) # total ec contribution
     
     data['project_id']=sub_df['projectID'].unique()[0]
     counts=sub_df['activityType'].value_counts().to_dict()  # total activityTypes count

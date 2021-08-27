@@ -79,7 +79,13 @@ def get_researchers_info_from_project(project_id):
     total_researchers=[item for sublist in total_researchers for item in sublist]
     global_stats['total_researchers']=int(len(set(total_researchers)))
     global_stats['total_publications']=int(len(set(total_publications)))
-    
+    # add other publication stats
+    df1=pd.read_csv("total_publications.csv")
+    global_stats['average_publications']=df1['count'].mean()
+    global_stats['max_publications']=df1['count'].max()
+    global_stats['min_publications']=df1['count'].min()
+    global_stats['std_dev_publications']=df1['count'].std()
+
     return data,global_stats
 
 
@@ -90,6 +96,11 @@ def get_project_info_investors(project_acronym=''):
     sub_df=get_projects_organization_h2020(project_acronym)
 
     sub_df['ecContribution']=pd.to_numeric(sub_df['ecContribution'])
+    # add avg sum investment
+    df1=pd.read_csv("total_cost_projects.csv")
+    data['avg_ecContribution']=df1['sum'].mean()
+    data['std_dev_ecContribution']=df1['sum'].std()
+    
     vals=sub_df['ecContribution'].values.tolist()
     vals= [x for x in vals if ~np.isnan(x)] # remove nans
     data['sum_ecContribution']=sum(vals) # total ec contribution

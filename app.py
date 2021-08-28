@@ -401,5 +401,19 @@ def get_researchers_info_investors():
     resp.headers.add('Access-Control-Allow-Origin', '*')
     return resp
 
+@app.route('/get_unique_projects_with_publications', methods=['POST'])
+def get_unique_projects_with_publications():
+    "returns the unique projects with publications"
+    
+    
+    data=researchers.get_unique_projects_with_publications()
+    resp={}
+    resp['projects']=data
+    print("resp: ", resp)
+    resp=jsonify(resp)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
+
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=3000)

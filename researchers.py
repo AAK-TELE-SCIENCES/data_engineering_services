@@ -42,6 +42,11 @@ def get_researchers_data(project_id):
     return df2
 
 
+def get_unique_projects_with_publications():
+    "returns the unique projects with publications"
+    df=pd.read_csv('unqiue_projects_with_publications.csv')
+    return df['projectAcronym'].values.tolist()
+
 def get_researchers_info_from_project(project_id):
     "returns the researchers and publications stats for the project id"
     df=get_researchers_data(project_id)

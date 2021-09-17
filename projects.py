@@ -24,19 +24,27 @@ connect_args={'ssl':{'fake_flag_to_enable_tls': True},
 db_connection_str = db_string
 db_connection = create_engine(db_connection_str,connect_args= connect_args)
 
-sql="select * from all_fp_projects"
 
-df1=pd.read_sql(sql,db_connection)
+def get_acronym_data(acr):
+    sql="select * from all_fp_projects where acronym='"+acr+"'"
+    df1=pd.read_sql(sql,db_connection)
+    return df1
+
+
+def get_coord_data(coord):
+    sql="select * from all_fp_projects where coordinator='"+coord+"'"
+    df1=pd.read_sql(sql,db_connection)
+    return df1
 
 
 def get_acronym_details(acr):
     "returns the details of acronym given for several years"
-    df=df1.loc[df1['acronym']==acr]
+    df=get_acronym_data(acr)
     return df.to_dict('dict')
 
 def get_acronym_details_timeseries(acr):
     "returns the details of acronym given for several years"
-    df=df1.loc[df1['acronym']==acr]
+    df=get_acronym_data(acr)
     
     df=df[['title','acronym','startDate','endDate','totalCost','ecMaxContribution']]
     df['startYear']=pd.to_datetime(df['startDate']).dt.year
@@ -65,13 +73,13 @@ def get_acronym_details_timeseries(acr):
 
 def get_coordinator_details(coord):
     "returns the details of coordinator given for several years"
-    df=df1.loc[df1['coordinator']==coord]
+    df=get_coord_data(coord)
     return df.to_dict('dict')
 
 
 def get_coordinator_details_timeseries(coord):
     "returns the details of coordinator given for several years"
-    df=df1.loc[df1['coordinator']==coord]
+    df=get_coord_data(coord)
     df=df[['title','acronym','startDate','endDate','totalCost','ecMaxContribution']]
     df['startYear']=pd.to_datetime(df['startDate']).dt.year
     df['endYear']=pd.to_datetime(df['endDate']).dt.year

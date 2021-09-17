@@ -142,5 +142,3 @@ def get_project_info_investors(project_acronym=''):
     
     data['researchers'],data['global_researcher_stats']=get_researchers_info_from_project(data['project_id']) # get researchers and publications
     return data
-
-print(get_project_info_investors("Rheform"))

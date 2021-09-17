@@ -12,7 +12,7 @@ from matplotlib import pyplot as plt
 matplotlib.pyplot.switch_backend('Agg') 
 import sic_per_country
 import sci_per_country
-import inst, countries, world_bank, companies, investors, researchers
+import inst, countries, world_bank, companies, investors, researchers, projects
 CORS(app, support_credentials=True)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -414,6 +414,36 @@ def get_unique_projects_with_publications():
     resp.headers.add('Access-Control-Allow-Origin', '*')
     return resp
 
+
+@app.route('/get_acronym_details', methods=['POST'])
+def get_acronym_details():
+    "returns the acronym details from fp"
+    
+    x=request.get_data(parse_form_data=True)
+    x=ast.literal_eval(x.decode("utf-8"))
+    acronym=x['acronym'][0]
+    print("acronym: ", acronym)
+
+    data=projects.get_acronym_details_timeseries(acronym)
+    resp=jsonify(data)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
+
+
+
+@app.route('/get_coordinator_details', methods=['POST'])
+def get_coordinator_details():
+    "returns the coordinator details from fp"
+    
+    x=request.get_data(parse_form_data=True)
+    x=ast.literal_eval(x.decode("utf-8"))
+    coordinator=x['coordinator'][0]
+    print("coordinator: ", coordinator)
+
+    data=projects.get_coordinator_details_timeseries(coordinator)
+    resp=jsonify(data)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=3000)

@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 
-
+import copy
 from sqlalchemy import create_engine
 import datetime
 
@@ -25,6 +25,11 @@ db_connection_str = db_string
 db_connection = create_engine(db_connection_str,connect_args= connect_args)
 
 
+df1=pd.read_csv('all_projects.csv',index_col=False)
+
+
+print(df1.head())
+
 def get_acronym_data(acr):
     sql="select * from all_fp_projects where acronym='"+acr+"'"
     df1=pd.read_sql(sql,db_connection)
@@ -44,9 +49,14 @@ def get_acronym_details(acr):
 
 def get_acronym_details_timeseries(acr):
     "returns the details of acronym given for several years"
-    df=get_acronym_data(acr)
+    #df=get_acronym_data(acr)
+    df=copy.deepcopy(df1)
+    df=df.loc[df['acronym']==acr]
     
     df=df[['title','acronym','startDate','endDate','totalCost','ecMaxContribution']]
+    
+    print(df.head())
+    
     df['startYear']=pd.to_datetime(df['startDate']).dt.year
     df['endYear']=pd.to_datetime(df['endDate']).dt.year
 
@@ -79,8 +89,13 @@ def get_coordinator_details(coord):
 
 def get_coordinator_details_timeseries(coord):
     "returns the details of coordinator given for several years"
-    df=get_coord_data(coord)
+    #df=get_coord_data(coord)
+    df=copy.deepcopy(df1)
+    df=df.loc[df['coordinator']==coord]
     df=df[['title','acronym','startDate','endDate','totalCost','ecMaxContribution']]
+    print(df.shape)
+    print(df.head(20))
+    
     df['startYear']=pd.to_datetime(df['startDate']).dt.year
     df['endYear']=pd.to_datetime(df['endDate']).dt.year
 
@@ -104,3 +119,11 @@ def get_coordinator_details_timeseries(coord):
     return data
 
 
+
+def get_stats_per_country(country):
+    coord=df1.loc[df1['coordinatorCountry']==country].shape[0]
+    
+    parti=df1[df1['participantCountries'].astype(str).str.contains(country)].shape[0]
+    parti=parti-coord # subtract where the country was coordinator as well
+    return coord, parti
+get_stats_per_country("FR")

@@ -28,8 +28,6 @@ db_connection = create_engine(db_connection_str,connect_args= connect_args)
 df1=pd.read_csv('all_projects.csv',index_col=False)
 
 
-print(df1.head())
-
 def get_acronym_data(acr):
     sql="select * from all_fp_projects where acronym='"+acr+"'"
     df1=pd.read_sql(sql,db_connection)
@@ -55,7 +53,6 @@ def get_acronym_details_timeseries(acr):
     
     df=df[['title','acronym','startDate','endDate','totalCost','ecMaxContribution']]
     
-    print(df.head())
     
     df['startYear']=pd.to_datetime(df['startDate']).dt.year
     df['endYear']=pd.to_datetime(df['endDate']).dt.year
@@ -93,8 +90,6 @@ def get_coordinator_details_timeseries(coord):
     df=copy.deepcopy(df1)
     df=df.loc[df['coordinator']==coord]
     df=df[['title','acronym','startDate','endDate','totalCost','ecMaxContribution']]
-    print(df.shape)
-    print(df.head(20))
     
     df['startYear']=pd.to_datetime(df['startDate']).dt.year
     df['endYear']=pd.to_datetime(df['endDate']).dt.year
@@ -121,9 +116,14 @@ def get_coordinator_details_timeseries(coord):
 
 
 def get_stats_per_country(country):
+    "returns the stats per country"
+    data={}
+    data['total']=len(df1)
     coord=df1.loc[df1['coordinatorCountry']==country].shape[0]
-    
+    data['coordinator']=coord
+
     parti=df1[df1['participantCountries'].astype(str).str.contains(country)].shape[0]
     parti=parti-coord # subtract where the country was coordinator as well
-    return coord, parti
-get_stats_per_country("FR")
+    data['participant']=parti
+    
+    return data

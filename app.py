@@ -445,5 +445,20 @@ def get_coordinator_details():
     resp.headers.add('Access-Control-Allow-Origin', '*')
     return resp
 
+
+@app.route('/get_country_stats_projects', methods=['POST'])
+def get_country_stats_projects():
+    "returns the country stats details from fp"
+    
+    x=request.get_data(parse_form_data=True)
+    x=ast.literal_eval(x.decode("utf-8"))
+    country=x['country'][0]
+    print("country: ", country)
+
+    data=projects.get_stats_per_country(country)
+    resp=jsonify(data)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=3000)

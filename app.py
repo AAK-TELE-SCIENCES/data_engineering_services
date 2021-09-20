@@ -490,5 +490,36 @@ def get_contribution_for_country():
     resp.headers.add('Access-Control-Allow-Origin', '*')
     return resp
 
+
+
+@app.route('/get_totalcost_for_inst', methods=['POST'])
+def get_totalcost_for_inst():
+    "returns the inst total cost details from fp"
+    
+    x=request.get_data(parse_form_data=True)
+    x=ast.literal_eval(x.decode("utf-8"))
+    inst=x['inst'][0]
+    print("inst: ", inst)
+
+    data=projects.get_totalcost_per_inst(inst)
+    resp=jsonify(data)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
+
+
+@app.route('/get_contribution_for_inst', methods=['POST'])
+def get_contribution_for_inst():
+    "returns the inst total contribution details from fp"
+    
+    x=request.get_data(parse_form_data=True)
+    x=ast.literal_eval(x.decode("utf-8"))
+    inst=x['inst'][0]
+    print("inst: ", inst)
+
+    data=projects.get_eccontribution_per_inst(inst)
+    resp=jsonify(data)
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=3000)

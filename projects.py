@@ -158,3 +158,37 @@ def get_eccontribution_per_country(country):
     df['ecMaxContribution']=df['ecMaxContribution'].fillna(0)
     df2=df.groupby(['startYear'])['ecMaxContribution'].sum()
     return df2.to_dict()
+
+
+
+
+def get_totalcost_per_inst(inst):
+    "returns the cumulative funding received by the inst for the year"
+    df=df1.loc[df1['coordinator']==inst]
+    df=df[['title','acronym','startDate','endDate','totalCost','ecMaxContribution']]
+    df['startYear']=pd.to_datetime(df['startDate']).dt.year
+    df['endYear']=pd.to_datetime(df['endDate']).dt.year
+    
+    print(df.head())
+    df=df.dropna(subset=['startYear'])
+    df['startYear']=df['startYear'].astype(np.int64)
+    df['totalCost']=df['totalCost'].fillna(0)
+    df['totalCost']=pd.to_numeric(df['totalCost'])
+    df2=df.groupby(['startYear'])['totalCost'].sum()
+    return df2.to_dict()
+
+
+def get_eccontribution_per_inst(inst):
+    "returns the cumulative ec contribution received by the inst for the year"
+    df=df1.loc[df1['coordinator']==inst]
+    df=df[['title','acronym','startDate','endDate','totalCost','ecMaxContribution']]
+    df['startYear']=pd.to_datetime(df['startDate']).dt.year
+    df['endYear']=pd.to_datetime(df['endDate']).dt.year
+    
+    df=df.dropna(subset=['startYear'])
+    df['startYear']=df['startYear'].astype(np.int64)
+    df['ecMaxContribution']=pd.to_numeric(df['ecMaxContribution'])
+    
+    df['ecMaxContribution']=df['ecMaxContribution'].fillna(0)
+    df2=df.groupby(['startYear'])['ecMaxContribution'].sum()
+    return df2.to_dict()

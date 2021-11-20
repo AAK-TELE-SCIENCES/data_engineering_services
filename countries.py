@@ -391,8 +391,16 @@ def get_all_inst_per_countries(country_name):
     df_con=pd.read_csv("new_data/wikipedia-iso-country-codes.csv")
     try: # get country code from the given country name
         country_code=df_con.loc[df_con['English short name lower case']==country_name]['Alpha-2 code'].values[0]
+        if country_code=="GB": # replace GB with UK
+            country_code="UK"
         sql="select name from eu_organizations where country='"+country_code+"'"
         df1 = pd.read_sql(sql, db_connection)
+
+        try:
+            df1['name']=df1['name'].str.replace('"', '')
+            df1['name']=df1['name'].str.replace("'", '')
+        except:
+            pass
         return df1['name'].values.tolist() # return all inst against the country code found
     except Exception as e:
         print("EXC: ", e)
